@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Contact Card</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+        .phone-container {
+            position: relative;
+            width: 340px;
+            height: 700px;
+            background: #000;
+            border: 12px solid #000;
+            border-radius: 45px;
+            box-shadow: 
+                inset 0 0 0 2px #3a3a3a,
+                0 20px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .app-content {
+            position: relative;
+            width: 90%;
+            height: 90%;
+            background: white;
+            border-radius: 35px;
+            overflow: hidden;
+            padding: 20px;
+            text-align: center;
+        }
+        .header {
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 20px;
+            border-radius: 10px;
+        }
+        .details {
+            text-align: left;
+            margin-top: 20px;
+        }
+        .details p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .sub-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #1976D2;
+        }
+        .power-button {
+            position: absolute;
+            right: -14px;
+            top: 150px;
+            width: 4px;
+            height: 45px;
+            background: #1a1a1a;
+            border-radius: 4px;
+            z-index: 2;
+        }
+        .volume-buttons {
+            position: absolute;
+            left: -14px;
+            top: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 2;
+        }
+        .volume-up, .volume-down {
+            width: 4px;
+            height: 35px;
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="power-button"></div>
+        <div class="volume-buttons">
+            <div class="volume-up"></div>
+            <div class="volume-down"></div>
+        </div>
+        <div class="app-content">
+            <div class="header">Details</div>
+            <div class="details">
+                <p><strong>Name:</strong> Rajesh Kumar</p>
+                <p><strong>Address:</strong> 45, MG Road, New Delhi, India</p>
+                <p><strong>Phone Number:</strong> +91 98765 43210</p>
+                <p><strong>Emergency Contact:</strong> +91 87654 32109</p>
+                <p><strong>Blood Group:</strong> B+</p>
+                <p><strong>Major Health Issues:</strong> None</p>
+                
+                <p class="sub-header">Doctor's Details</p>
+                <p><strong>Family Doctor:</strong> Dr. Anil Mehta</p>
+                <p><strong>Doctor's Contact:</strong> +91 99876 54321</p>
+                <p><strong>Hospital Address:</strong> Apollo Hospital, Sector 18, Noida, India</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

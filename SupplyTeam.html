@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supply Team Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+        }
+
+        .phone-container {
+            position: relative;
+            width: 340px;
+            height: 700px;
+            background: #000;
+            border: 12px solid #000;
+            border-radius: 45px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .app-content {
+            height: 100%;
+            background: #f5f5f5;
+            border-radius: 35px;
+            overflow-y: scroll;
+            position: relative;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+            padding-bottom: 100px; /* Space for fixed elements */
+        }
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .app-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Ensure content fits */
+        .content-wrapper {
+            padding: 16px;
+            padding-bottom: 120px; /* Extra padding for fixed bottom elements */
+        }
+
+        /* Make form elements more compact */
+        .form-group {
+            margin-bottom: 0.75rem;
+        }
+
+        input, select, button {
+            font-size: 0.875rem;
+        }
+
+        /* Compact cards */
+        .card {
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Sticky header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: linear-gradient(to right, #3B82F6, #2563EB);
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Compact text */
+        h2 {
+            font-size: 1.125rem;
+            margin-bottom: 0.75rem;
+        }
+
+        h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Grid layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+
+        /* Animation for smooth scrolling */
+        .app-content {
+            scroll-behavior: smooth;
+        }
+
+        /* Compact buttons */
+        .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            border-radius: 0.375rem;
+        }
+
+        /* Status indicators */
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        /* Responsive text sizing */
+        @media (max-height: 700px) {
+            .app-content {
+                font-size: 0.875rem;
+            }
+            
+            h2 {
+                font-size: 1rem;
+            }
+            
+            h3 {
+                font-size: 0.875rem;
+            }
+        }
+
+        .nav-button {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin: 0.5rem;
+            background: white;
+            border-radius: 12px;
+            color: #1F2937;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background: #F3F4F6;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="app-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="flex items-center justify-center gap-3">
+                    <span class="text-2xl">🏥</span>
+                    <h1 class="text-xl font-bold text-white">Supply Team Portal</h1>
+                </div>
+                <p class="text-center text-sm mt-1 text-white/90">Healthcare Services</p>
+            </div>
+
+            <!-- Wrap all content in content-wrapper -->
+            <div class="content-wrapper">
+                <!-- Add this new section after the Navigation Links section -->
+                <div class="p-4">
+                    <h2 class="text-lg font-bold text-gray-800 mb-3">Inventory Management</h2>
+                    
+                    <!-- Medicine Inventory -->
+                    <div class="bg-white rounded-lg shadow-md p-4 mb-4">
+                        <h3 class="font-medium text-blue-600 mb-3">Medicine Inventory</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <input 
+                                    type="text" 
+                                    placeholder="Medicine Name"
+                                    class="flex-1 p-2 border rounded-lg mr-2 text-sm"
+                                    id="medicineName"
+                                >
+                                <input 
+                                    type="number" 
+                                    placeholder="Quantity"
+                                    class="w-20 p-2 border rounded-lg mr-2 text-sm"
+                                    id="medicineQty"
+                                >
+                                <button 
+                                    onclick="addMedicineInventory()"
+                                    class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"
+                                >
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Blood Bank Inventory -->
+                    <div class="bg-white rounded-lg shadow-md p-4 mb-4">
+                        <h3 class="font-medium text-red-600 mb-3">Blood Bank Inventory</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <select 
+                                    id="bloodType"
+                                    class="flex-1 p-2 border rounded-lg mr-2 text-sm"
+                                >
+                                    <option value="">Select Blood Type</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                </select>
+                                <input 
+                                    type="number" 
+                                    placeholder="Units"
+                                    class="w-20 p-2 border rounded-lg mr-2 text-sm"
+                                    id="bloodUnits"
+                                >
+                                <button 
+                                    onclick="updateBloodInventory()"
+                                    class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700"
+                                >
+                                    Update
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Medicine Inventory -->
+                    <div class="bg-white rounded-lg shadow-md p-4">
+                        <h3 class="font-medium text-orange-600 mb-3">Emergency Medicine</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <input 
+                                    type="text" 
+                                    placeholder="Emergency Medicine"
+                                    class="flex-1 p-2 border rounded-lg mr-2 text-sm"
+                                    id="emergencyMed"
+                                >
+                                <input 
+                                    type="number" 
+                                    placeholder="Qty"
+                                    class="w-20 p-2 border rounded-lg mr-2 text-sm"
+                                    id="emergencyQty"
+                                >
+                                <button 
+                                    onclick="updateEmergencyInventory()"
+                                    class="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-orange-700"
+                                >
+                                    Update
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add this new section after the Emergency Medicine Inventory -->
+                    <div class="p-4">
+                        <h2 class="text-lg font-bold text-gray-800 mb-3">Insurance Management</h2>
+                        
+                        <!-- Insurance Plan Management -->
+                        <div class="bg-white rounded-lg shadow-md p-4 mb-4">
+                            <h3 class="font-medium text-indigo-600 mb-3">Add/Update Insurance Plans</h3>
+                            
+                            <!-- Insurance Plan Form -->
+                            <div class="space-y-3">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <input 
+                                        type="text" 
+                                        placeholder="Insurance Provider"
+                                        class="p-2 border rounded-lg text-sm"
+                                        id="insuranceProvider"
+                                    >
+                                    <input 
+                                        type="text" 
+                                        placeholder="Plan Name"
+                                        class="p-2 border rounded-lg text-sm"
+                                        id="planName"
+                                    >
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-2">
+                                    <input 
+                                        type="number" 
+                                        placeholder="Coverage Amount (₹)"
+                                        class="p-2 border rounded-lg text-sm"
+                                        id="coverageAmount"
+                                    >
+                                    <input 
+                                        type="number" 
+                                        placeholder="Monthly Premium (₹)"
+                                        class="p-2 border rounded-lg text-sm"
+                                        id="monthlyPremium"
+                                    >
+                                </div>
+
+                                <!-- Plan Type Selection -->
+                                <select 
+                                    id="planType"
+                                    class="w-full p-2 border rounded-lg text-sm"
+                                >
+                                    <option value="">Select Plan Type</option>
+                                    <option value="Individual">Individual Plan</option>
+                                    <option value="Family">Family Plan</option>
+                                    <option value="Senior">Senior Citizen Plan</option>
+                                    <option value="Critical">Critical Illness Cover</option>
+                                </select>
+
+                                <!-- Key Benefits -->
+                                <div class="space-y-2">
+                                    <label class="text-sm text-gray-600">Key Benefits</label>
+                                    <div class="flex gap-2">
+                                        <input 
+                                            type="text" 
+                                            placeholder="Add benefit"
+                                            class="flex-1 p-2 border rounded-lg text-sm"
+                                            id="benefitInput"
+                                        >
+                                        <button 
+                                            onclick="addBenefit()"
+                                            class="bg-gray-200 px-4 py-2 rounded-lg text-sm hover:bg-gray-300"
+                                        >
+                                            Add
+                                        </button>
+                                    </div>
+                                    <div id="benefitsList" class="space-y-1 text-sm"></div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="flex gap-2">
+                                    <button 
+                                        onclick="addInsurancePlan()"
+                                        class="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700"
+                                    >
+                                        Add New Plan
+                                    </button>
+                                    <button 
+                                        onclick="updateInsurancePlan()"
+                                        class="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700"
+                                    >
+                                        Update Existing
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="p-4">
+                    <div class="bg-white rounded-lg shadow-md p-4">
+                        <h2 class="text-lg font-bold text-gray-800 mb-3">Today's Overview</h2>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-blue-50 p-3 rounded-lg">
+                                <p class="text-sm text-blue-600">Pending Deliveries</p>
+                                <p class="text-xl font-bold text-blue-700">24</p>
+                            </div>
+                            <div class="bg-green-50 p-3 rounded-lg">
+                                <p class="text-sm text-green-600">Completed</p>
+                                <p class="text-xl font-bold text-green-700">18</p>
+                            </div>
+                            <div class="bg-yellow-50 p-3 rounded-lg">
+                                <p class="text-sm text-yellow-600">In Progress</p>
+                                <p class="text-xl font-bold text-yellow-700">6</p>
+                            </div>
+                            <div class="bg-purple-50 p-3 rounded-lg">
+                                <p class="text-sm text-purple-600">Emergency</p>
+                                <p class="text-xl font-bold text-purple-700">3</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this script section before the closing body tag -->
+    <script>
+        // Simulating a shared database using localStorage
+        function updateInventoryDatabase(type, data) {
+            // Store data in localStorage (in a real app, this would be a database)
+            let inventory = JSON.parse(localStorage.getItem('healthAppInventory') || '{}');
+            
+            switch(type) {
+                case 'medicine':
+                    if (!inventory.medicines) inventory.medicines = [];
+                    inventory.medicines.push(data);
+                    break;
+                    
+                case 'blood':
+                    if (!inventory.bloodBank) inventory.bloodBank = {};
+                    inventory.bloodBank[data.bloodType] = data.units;
+                    break;
+                    
+                case 'emergency':
+                    if (!inventory.emergencyMeds) inventory.emergencyMeds = [];
+                    inventory.emergencyMeds.push(data);
+                    break;
+                    
+                case 'insurance':
+                    if (!inventory.insurancePlans) inventory.insurancePlans = [];
+                    inventory.insurancePlans.push(data);
+                    break;
+            }
+            
+            // Save updated inventory
+            localStorage.setItem('healthAppInventory', JSON.stringify(inventory));
+            
+            // Notify about the update
+            notifyUpdate(type, data);
+        }
+
+        // Update the existing functions to use the database
+        function addMedicineInventory() {
+            const name = document.getElementById('medicineName').value;
+            const qty = document.getElementById('medicineQty').value;
+            
+            if (!name || !qty) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const medicineData = {
+                name: name,
+                quantity: qty,
+                timestamp: new Date().toISOString()
+            };
+
+            updateInventoryDatabase('medicine', medicineData);
+            alert(`Added ${qty} units of ${name} to inventory`);
+            
+            // Clear inputs
+            document.getElementById('medicineName').value = '';
+            document.getElementById('medicineQty').value = '';
+        }
+
+        function updateBloodInventory() {
+            const bloodType = document.getElementById('bloodType').value;
+            const units = document.getElementById('bloodUnits').value;
+            
+            if (!bloodType || !units) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const bloodData = {
+                bloodType: bloodType,
+                units: units,
+                timestamp: new Date().toISOString()
+            };
+
+            updateInventoryDatabase('blood', bloodData);
+            alert(`Updated ${bloodType} blood inventory with ${units} units`);
+            
+            // Clear inputs
+            document.getElementById('bloodType').value = '';
+            document.getElementById('bloodUnits').value = '';
+        }
+
+        function updateEmergencyInventory() {
+            const medicine = document.getElementById('emergencyMed').value;
+            const qty = document.getElementById('emergencyQty').value;
+            
+            if (!medicine || !qty) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Here you would typically make an API call to update the database
+            alert(`Updated emergency inventory: ${medicine} - ${qty} units`);
+            
+            // Clear inputs
+            document.getElementById('emergencyMed').value = '';
+            document.getElementById('emergencyQty').value = '';
+        }
+
+        // Store benefits temporarily
+        let currentBenefits = [];
+
+        function addBenefit() {
+            const benefitInput = document.getElementById('benefitInput');
+            const benefit = benefitInput.value.trim();
+            
+            if (benefit) {
+                currentBenefits.push(benefit);
+                updateBenefitsList();
+                benefitInput.value = '';
+            }
+        }
+
+        function updateBenefitsList() {
+            const benefitsList = document.getElementById('benefitsList');
+            benefitsList.innerHTML = currentBenefits.map(benefit => `
+                <div class="flex items-center gap-2 bg-gray-50 p-2 rounded">
+                    <span>• ${benefit}</span>
+                    <button 
+                        onclick="removeBenefit('${benefit}')"
+                        class="text-red-500 text-xs hover:text-red-700"
+                    >
+                        ✕
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removeBenefit(benefit) {
+            currentBenefits = currentBenefits.filter(b => b !== benefit);
+            updateBenefitsList();
+        }
+
+        function addInsurancePlan() {
+            const provider = document.getElementById('insuranceProvider').value;
+            const planName = document.getElementById('planName').value;
+            const coverage = document.getElementById('coverageAmount').value;
+            const premium = document.getElementById('monthlyPremium').value;
+            const planType = document.getElementById('planType').value;
+
+            if (!provider || !planName || !coverage || !premium || !planType) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            const planData = {
+                provider,
+                planName,
+                coverage,
+                premium,
+                planType,
+                benefits: [...currentBenefits],
+                timestamp: new Date().toISOString()
+            };
+
+            updateInventoryDatabase('insurance', planData);
+            alert(`New insurance plan added: ${planName} by ${provider}`);
+            
+            addPlanToList(planData);
+            clearInsuranceForm();
+        }
+
+        function updateInsurancePlan() {
+            // Similar to addInsurancePlan but with update logic
+            const provider = document.getElementById('insuranceProvider').value;
+            const planName = document.getElementById('planName').value;
+            
+            if (!provider || !planName) {
+                alert('Please specify the plan to update');
+                return;
+            }
+
+            // Here you would typically make an API call to update the database
+            alert(`Insurance plan updated: ${planName} by ${provider}`);
+            
+            // Clear form
+            clearInsuranceForm();
+        }
+
+        function addPlanToList(plan) {
+            const plansList = document.getElementById('insurancePlansList');
+            const planElement = document.createElement('div');
+            planElement.className = 'bg-gray-50 p-3 rounded-lg text-sm';
+            planElement.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h4 class="font-medium">${plan.planName}</h4>
+                        <p class="text-gray-600">${plan.provider}</p>
+                        <p class="text-gray-600">Coverage: ₹${plan.coverage}</p>
+                        <p class="text-gray-600">Premium: ₹${plan.premium}/month</p>
+                    </div>
+                    <button 
+                        onclick="deletePlan('${plan.planName}')"
+                        class="text-red-500 hover:text-red-700"
+                    >
+                        Delete
+                    </button>
+                </div>
+            `;
+            plansList.appendChild(planElement);
+        }
+
+        function deletePlan(planName) {
+            if (confirm(`Are you sure you want to delete ${planName}?`)) {
+                // Here you would typically make an API call to delete from database
+                alert(`Insurance plan deleted: ${planName}`);
+            }
+        }
+
+        function clearInsuranceForm() {
+            document.getElementById('insuranceProvider').value = '';
+            document.getElementById('planName').value = '';
+            document.getElementById('coverageAmount').value = '';
+            document.getElementById('monthlyPremium').value = '';
+            document.getElementById('planType').value = '';
+            currentBenefits = [];
+            updateBenefitsList();
+        }
+
+        // Function to notify about updates (in a real app, this would use WebSockets)
+        function notifyUpdate(type, data) {
+            // Create a custom event
+            const event = new CustomEvent('inventoryUpdate', {
+                detail: { type, data }
+            });
+            
+            // Dispatch the event
+            window.dispatchEvent(event);
+            
+            // Log the update
+            console.log(`Inventory updated: ${type}`, data);
+        }
+
+        // Add this to customer pages to listen for updates
+        window.addEventListener('inventoryUpdate', function(event) {
+            const { type, data } = event.detail;
+            // Update the customer view based on the type of update
+            updateCustomerView(type, data);
+        });
+    </script>
+
+    <!-- Add this to customer pages -->
+    <script>
+        // Function to load and display inventory for customers
+        function loadInventory() {
+            const inventory = JSON.parse(localStorage.getItem('healthAppInventory') || '{}');
+            
+            // Update various sections based on inventory data
+            if (inventory.medicines) {
+                displayMedicines(inventory.medicines);
+            }
+            
+            if (inventory.bloodBank) {
+                displayBloodBank(inventory.bloodBank);
+            }
+            
+            if (inventory.insurancePlans) {
+                displayInsurancePlans(inventory.insurancePlans);
+            }
+        }
+
+        // Call this when the customer page loads
+        document.addEventListener('DOMContentLoaded', loadInventory);
+    </script>
+
+    <!-- Add this script for smooth scrolling -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scroll to sections
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Adjust content on resize
+            function adjustContent() {
+                const phoneHeight = document.querySelector('.phone-container').offsetHeight;
+                const header = document.querySelector('.header').offsetHeight;
+                document.querySelector('.content-wrapper').style.maxHeight = 
+                    `${phoneHeight - header}px`;
+            }
+
+            window.addEventListener('resize', adjustContent);
+            adjustContent();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+        }
+
+        .phone-container {
+            position: relative;
+            width: 340px;
+            height: 700px;
+            background: #000;
+            border: 12px solid #000;
+            border-radius: 45px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .app-content {
+            height: 100%;
+            background: #f5f5f5;
+            border-radius: 35px;
+            overflow-y: scroll;
+            position: relative;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding-bottom: 100px;
+        }
+
+        .app-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .content-wrapper {
+            padding: 16px;
+            padding-bottom: 120px;
+            position: relative;
+            min-height: calc(100% - 80px);
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: linear-gradient(to right, #3B82F6, #2563EB);
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-button {
+            display: block;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: white;
+            border-radius: 0.75rem;
+            color: #1F2937;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="app-content">
+            <div class="header">
+                <div class="flex items-center justify-center gap-3">
+                    <span class="text-2xl">👤</span>
+                    <h1 class="text-xl font-bold text-white">Customer Portal</h1>
+                </div>
+                <p class="text-center text-sm mt-1 text-white/90">Healthcare Services</p>
+            </div>
+
+            <div class="content-wrapper">
+                <nav class="space-y-4">
+                    <a href="Details.html" class="nav-button flex items-center p-2 border rounded-md hover:bg-gray-200 active:bg-gray-300 transition"
+   aria-label="Details">
+    <span class="mr-3">ℹ️</span>
+    Details
+</a>
+
+                    <a href="Medicine_Delivery.html" class="nav-button flex items-center">
+                        <span class="mr-3">💊</span>
+                        Medicine Delivery
+                    </a>
+                    <a href="blood_bank.html" class="nav-button flex items-center">
+                        <span class="mr-3">🩸</span>
+                        Blood Bank Information
+                    </a>
+                    <a href="health_insurance.html" class="nav-button flex items-center">
+                        <span class="mr-3">🏥</span>
+                        Health Insurance
+                    </a>
+                    <a href="emergency_medicine.html" class="nav-button flex items-center">
+                        <span class="mr-3">🚑</span>
+                        Emergency Medicine
+                    </a>
+                    
+                    <!-- Talk with Doctor Section -->
+                    <a href="talk_with_doctor.html" class="nav-button flex items-center">
+                        <span class="mr-3">🩺</span>
+                        Talk with Doctor
+                    </a>
+                </nav>
+
+                <div class="absolute bottom-6 left-4 right-4">
+                    <button 
+                        class="w-full bg-red-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-lg hover:bg-red-700 transition-all animate-pulse"
+                        onclick="handleEmergency()"
+                    >
+                        <span class="text-2xl">🚑</span>
+                        <span class="uppercase tracking-wider">SOS Emergency</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleEmergency() {
+            const confirmation = confirm("Do you need emergency medical assistance?");
+            if (confirmation) {
+                alert("Connecting to emergency services...");
+            }
+        }
+    </script>
+</body>
+</html>

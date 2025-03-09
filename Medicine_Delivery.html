@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Delivery</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f1f1f1;
+        }
+
+        .phone-container {
+            position: relative;
+            width: 340px;
+            height: 700px;
+            background: #000;
+            border: 12px solid #000;
+            border-radius: 45px;
+            box-shadow: 
+                inset 0 0 0 2px #3a3a3a,
+                0 20px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        /* Phone Hardware Elements */
+        .power-button {
+            position: absolute;
+            right: -14px;
+            top: 150px;
+            width: 4px;
+            height: 45px;
+            background: #1a1a1a;
+            border-radius: 4px;
+            z-index: 2;
+        }
+
+        .volume-buttons {
+            position: absolute;
+            left: -14px;
+            top: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 2;
+        }
+
+        .volume-up, .volume-down {
+            width: 4px;
+            height: 35px;
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+
+        .app-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 35px;
+            overflow-y: auto;
+        }
+
+        
+        
+       
+
+        /* Adjust content padding for notch */
+        .content-wrapper {
+            padding-top: 25px;
+            height: calc(100% - 25px);
+            overflow-y: auto;
+        }
+
+        /* Scrollbar styling */
+        .content-wrapper::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .content-wrapper::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .content-wrapper::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 5px;
+        }
+
+        .medicine-card {
+            transition: all 0.3s ease;
+        }
+
+        .medicine-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <!-- Phone Hardware -->
+        <div class="power-button"></div>
+        <div class="volume-buttons">
+            <div class="volume-up"></div>
+            <div class="volume-down"></div>
+        </div>
+        <div class="notch"></div>
+        <div class="camera"></div>
+        <div class="speaker"></div>
+
+        <div class="app-content">
+            
+            <div class="content-wrapper">
+                <div id="root"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- React and ReactDOM -->
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function MedicineOrder() {
+            const [orderType, setOrderType] = useState('normal');
+            const [searchQuery, setSearchQuery] = useState('');
+            const [cart, setCart] = useState([]);
+            const [orderPlaced, setOrderPlaced] = useState(false);
+            const [filteredMedicines, setFilteredMedicines] = useState([]);
+
+            const medicines = [
+                {
+                    id: 1,
+                    name: "Crocin Advance 500mg",
+                    image: "https://www.netmeds.com/images/product-v1/600x600/341433/crocin_advance_500mg_tablet_15s_0.jpg",
+                    manufacturer: "GSK Pharmaceuticals",
+                    mfgDate: "2024-01-01",
+                    expDate: "2026-01-01",
+                    price: 15.00,
+                    
+                    components: ["Paracetamol", "Starch"],
+                    uses: "For fever and mild to moderate pain",
+                    stock: 150,
+                    category: "Pain Relief",
+                    pack: "15 tablets"
+                },
+                {
+                    id: 2,
+                    name: "Dolo 650mg",
+                    image: "https://www.netmeds.com/images/product-v1/600x600/313702/dolo_650mg_tablet_15s_0.jpg",
+                    manufacturer: "Micro Labs Ltd",
+                    mfgDate: "2024-02-01",
+                    expDate: "2026-02-01",
+                    price: 34.00,
+                  
+                    components: ["Paracetamol"],
+                    uses: "For fever and body pain",
+                    stock: 200,
+                    category: "Pain Relief",
+                    pack: "15 tablets"
+                },
+                {
+                    id: 3,
+                    name: "Azithral 500mg",
+                    image: "https://www.netmeds.com/images/product-v1/600x600/341494/azithral_500mg_tablet_5s_0.jpg",
+                    manufacturer: "Alembic Pharma",
+                    mfgDate: "2024-01-15",
+                    expDate: "2025-01-15",
+                    price: 79.00,
+                    
+                    components: ["Azithromycin"],
+                    uses: "For bacterial infections",
+                    stock: 80,
+                    category: "Antibiotics",
+                    pack: "5 tablets"
+                },
+                {
+                    id: 4,
+                    name: "Pan 40mg",
+                    image: "https://www.netmeds.com/images/product-v1/600x600/313445/pan_40mg_tablet_15s_0.jpg",
+                    manufacturer: "Alkem Labs",
+                    mfgDate: "2024-02-10",
+                    expDate: "2026-02-10",
+                    price: 120.00,
+                   
+                    components: ["Pantoprazole"],
+                    uses: "For acidity and gastric problems",
+                    stock: 100,
+                    category: "Digestive",
+                    pack: "15 tablets"
+                },
+                {
+                    id: 5,
+                    name: "Montair LC",
+                    image: "https://www.netmeds.com/images/product-v1/600x600/341499/montair_lc_tablet_10s_0.jpg",
+                    manufacturer: "Cipla Ltd",
+                    mfgDate: "2024-01-20",
+                    expDate: "2025-01-20",
+                    price: 145.00,
+                  
+                    components: ["Montelukast", "Levocetirizine"],
+                    uses: "For allergic asthma and rhinitis",
+                    stock: 60,
+                    category: "Respiratory",
+                    pack: "10 tablets"
+                },
+                {
+                    id: 6,
+                    name: "Saridon",
+                    image: "https://www.netmeds.com/images/product-v1/600x600/313712/saridon_tablet_10s_0.jpg",
+                    manufacturer: "Bayer Pharmaceuticals",
+                    mfgDate: "2024-01-25",
+                    expDate: "2025-01-25",
+                    price: 32.00,
+                  
+                    components: ["Paracetamol", "Propyphenazone", "Caffeine"],
+                    uses: "For headache and migraine",
+                    stock: 120,
+                    category: "Pain Relief",
+                    pack: "10 tablets"
+                },
+                {
+                    id: 7,
+                    name: "Allegra 120mg",
+                    image: "https://www.netmeds.com/images/product-v1/600x600/341435/allegra_120mg_tablet_10s_0.jpg",
+                    manufacturer: "Sanofi India",
+                    mfgDate: "2024-02-15",
+                    expDate: "2026-02-15",
+                    price: 168.00,
+              
+                    components: ["Fexofenadine"],
+                    uses: "For allergy and hay fever",
+                    stock: 90,
+                    category: "Allergy",
+                    pack: "10 tablets"
+                },
+                {
+                    id: 8,
+                    name: "Limcee 500mg",
+                    image: "https://www.netmeds.com/images/product-v1/600x600/313458/limcee_vitamin_c_500mg_tablet_15s_0.jpg",
+                    manufacturer: "Abbott India",
+                    mfgDate: "2024-01-10",
+                    expDate: "2025-07-10",
+                    price: 23.00,
+                  
+                    components: ["Vitamin C (Ascorbic Acid)"],
+                    uses: "Vitamin C supplement",
+                    stock: 150,
+                    category: "Vitamins",
+                    pack: "15 tablets"
+                },
+                {
+                    id: 9,
+                    name: "Shelcal 500mg",
+                    image: "https://www.netmeds.com/images/product-v1/600x600/313476/shelcal_500mg_tablet_15s_0.jpg",
+                    manufacturer: "Torrent Pharma",
+                    mfgDate: "2024-02-20",
+                    expDate: "2026-02-20",
+                    price: 87.00,
+                    
+                    components: ["Calcium Carbonate", "Vitamin D3"],
+                    uses: "Calcium supplement",
+                    stock: 100,
+                    category: "Supplements",
+                    pack: "15 tablets"
+                },
+                {
+                    id: 10,
+                    name: "Zincovit",
+                    image: "https://www.netmeds.com/images/product-v1/600x600/313491/zincovit_tablet_15s_0.jpg",
+                    manufacturer: "Apex Labs",
+                    mfgDate: "2024-01-30",
+                    expDate: "2025-01-30",
+                    price: 95.00,
+                 
+                    components: ["Multivitamins", "Minerals", "Zinc"],
+                    uses: "Multivitamin supplement",
+                    stock: 80,
+                    category: "Vitamins",
+                    pack: "15 tablets"
+                }
+            ];
+
+            // Search functionality
+            useEffect(() => {
+                const searchMedicines = () => {
+                    const query = searchQuery.toLowerCase().trim();
+                    
+                    if (query === '') {
+                        setFilteredMedicines(medicines);
+                        return;
+                    }
+
+                    const filtered = medicines.filter(medicine => 
+                        medicine.name.toLowerCase().includes(query) ||
+                        medicine.category.toLowerCase().includes(query) ||
+                        medicine.uses.toLowerCase().includes(query) ||
+                        medicine.manufacturer.toLowerCase().includes(query) ||
+                        medicine.components.some(component => 
+                            component.toLowerCase().includes(query)
+                        )
+                    );
+                    setFilteredMedicines(filtered);
+                };
+
+                searchMedicines();
+            }, [searchQuery]);
+
+            // Initialize filtered medicines
+            useEffect(() => {
+                setFilteredMedicines(medicines);
+            }, []);
+
+            // Cart functions
+            const addToCart = (medicine) => {
+                const existingItem = cart.find(item => item.id === medicine.id);
+                if (existingItem) {
+                    setCart(cart.map(item =>
+                        item.id === medicine.id
+                            ? { ...item, quantity: item.quantity + 1 }
+                            : item
+                    ));
+                } else {
+                    setCart([...cart, { ...medicine, quantity: 1 }]);
+                }
+            };
+
+            const removeFromCart = (medicineId) => {
+                setCart(cart.filter(item => item.id !== medicineId));
+            };
+
+            const updateQuantity = (medicineId, newQuantity) => {
+                if (newQuantity < 1) {
+                    removeFromCart(medicineId);
+                    return;
+                }
+                setCart(cart.map(item =>
+                    item.id === medicineId
+                        ? { ...item, quantity: newQuantity }
+                        : item
+                ));
+            };
+
+            // Calculate cart total
+            const cartTotal = cart.reduce((total, item) => 
+                total + (item.price * item.quantity), 0
+            );
+
+            // Calculate delivery charge
+            const deliveryCharge = orderType === 'emergency' ? 100 : 40;
+
+            // Add around line 411
+            const savings = cart.reduce((total, item) => 
+                total + ((item.mrp - item.price) * item.quantity), 0
+            );
+
+            // Place order function
+            const placeOrder = () => {
+                if (cart.length === 0) return;
+
+                const orderDetails = {
+                    orderId: `ORD${Date.now()}`,
+                    items: cart,
+                    orderType: orderType,
+                    total: cartTotal + deliveryCharge,
+                    deliveryCharge: deliveryCharge,
+                    orderDate: new Date().toLocaleString(),
+                    estimatedDelivery: orderType === 'emergency' ? '30 minutes' : '24 hours'
+                };
+
+                // Show order confirmation
+                setOrderPlaced(true);
+                alert(`Order Placed Successfully!\nOrder ID: ${orderDetails.orderId}\nEstimated Delivery: ${orderDetails.estimatedDelivery}`);
+                
+                // Clear cart after order
+                setCart([]);
+                setOrderPlaced(false);
+            };
+
+            return (
+                <div className="h-full flex flex-col">
+                    {/* Main Content Area */}
+                    <div className="flex-1 overflow-y-auto pb-24">
+                        {/* Search and Order Type Section */}
+                        <div className="sticky top-0 bg-white p-4 shadow-md z-10">
+                            <div className="mb-4">
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        placeholder="Search by name, category, or use..."
+                                        className="w-full p-2 pl-8 rounded-lg border text-sm"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                    />
+                                    <svg
+                                        className="absolute left-2 top-2.5 h-4 w-4 text-gray-400"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                        />
+                                    </svg>
+                                    {searchQuery && (
+                                        <button
+                                            className="absolute right-2 top-2.5 text-gray-400 hover:text-gray-600"
+                                            onClick={() => setSearchQuery('')}
+                                        >
+                                            ✕
+                                        </button>
+                                    )}
+                                </div>
+                                {/* Search Results Count */}
+                                <div className="text-xs text-gray-500 mt-1">
+                                    Showing {filteredMedicines.length} of {medicines.length} medicines
+                                </div>
+                            </div>
+
+                            {/* Order Type buttons remain same ... */}
+                        </div>
+
+                        {/* Medicine List */}
+                        <div className="px-4 py-2 space-y-4">
+                            {filteredMedicines.length > 0 ? (
+                                filteredMedicines.map((medicine) => (
+                                    <div key={medicine.id} className="medicine-card bg-white p-4 rounded-lg shadow-md">
+                                        <img src={medicine.image} alt={medicine.name} className="w-24 h-24 object-cover mx-auto mb-3" />
+                                        <div className="flex justify-between">
+                                            <h3 className="font-bold text-sm">{medicine.name}</h3>
+                                            <span className="text-blue-600 font-bold text-sm">
+                                                ₹{medicine.price.toFixed(2)}
+                                            </span>
+                                        </div>
+                                        <p className="text-gray-600">{medicine.uses}</p>
+                                        <p className="text-gray-500">Mfg: {medicine.mfgDate} | Exp: {medicine.expDate}</p>
+                                        
+                                        <button className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                                            Order Now
+                                        </button>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-center py-8">
+                                    <div className="text-gray-400 text-4xl mb-2">🔍</div>
+                                    <p className="text-gray-500">No medicines found matching "{searchQuery}"</p>
+                                    <button 
+                                        className="mt-2 text-blue-500 text-sm"
+                                        onClick={() => setSearchQuery('')}
+                                    >
+                                        Clear search
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Enhanced Cart Summary */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-white border-t">
+                        {cart.length > 0 && (
+                            <div className="max-h-48 overflow-y-auto p-2 border-b">
+                                {cart.map(item => (
+                                    <div key={item.id} className="flex justify-between items-center py-1">
+                                        <div className="flex-1">
+                                            <p className="text-sm font-medium">{item.name}</p>
+                                            <p className="text-xs text-gray-500">₹{item.price} x {item.quantity}</p>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <button 
+                                                className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center"
+                                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                            >
+                                                -
+                                            </button>
+                                            <span className="text-sm">{item.quantity}</span>
+                                            <button 
+                                                className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center"
+                                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                        <div className="p-3">
+                            <div className="flex justify-between text-sm mb-1">
+                                <span>Items Total:</span>
+                                <span>₹{cartTotal.toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between text-sm mb-1">
+                                <span>Delivery Charge:</span>
+                                <span>₹{deliveryCharge}</span>
+                            </div>
+                            <div className="flex justify-between text-sm mb-2 text-green-600">
+                                <span>Savings:</span>
+                                <span>₹{(savings).toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between font-bold border-t pt-2">
+                                <span>Total Amount:</span>
+                                <span>₹{(cartTotal + deliveryCharge).toFixed(2)}</span>
+                            </div>
+                            <button 
+                                onClick={placeOrder}
+                                className={`w-full mt-2 py-2 rounded-lg text-white text-sm ${
+                                    cart.length > 0 ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-400'
+                                }`}
+                                disabled={cart.length === 0}
+                            >
+                                {orderPlaced ? 'Processing...' : `Proceed to Checkout (${cart.length} items)`}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(
+            <MedicineOrder />,
+            document.getElementById('root')
+        );
+    </script>
+</body>
+</html>

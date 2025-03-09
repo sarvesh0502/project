@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Medicine Delivery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+        }
+
+        .phone-container {
+            position: relative;
+            width: 340px;
+            height: 700px;
+            background: #000;
+            border: 12px solid #000;
+            border-radius: 45px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .app-content {
+            height: 100%;
+            background: #f5f5f5;
+            border-radius: 35px;
+            overflow-y: auto;
+        }
+
+        .emergency-badge {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="app-content">
+            <!-- Emergency Header -->
+            <div class="sticky top-0 bg-red-600 text-white p-4 z-10">
+                <div class="flex justify-between items-center">
+                    <h1 class="text-xl font-bold">Emergency Medicines</h1>
+                    
+                </div>
+                <p class="text-sm mt-1">30-Minute Delivery Guaranteed</p>
+            </div>
+
+            
+
+            <!-- Emergency Medicine List -->
+            <div class="p-4 space-y-3">
+                <!-- Heart Medicines -->
+                <div class="bg-white rounded-lg p-4 shadow-md">
+                    <h2 class="text-lg font-bold text-red-600 mb-3">Heart Emergency</h2>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="font-medium">Sorbitrate 5mg</h3>
+                                <p class="text-sm text-gray-600">Sublingual Tablets</p>
+                                <p class="text-xs text-green-600">In Stock</p>
+                            </div>
+                            <button class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+                                Order Now
+                            </button>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="font-medium">Clopidogrel 75mg</h3>
+                                <p class="text-sm text-gray-600">Anti-platelet</p>
+                                <p class="text-xs text-green-600">In Stock</p>
+                            </div>
+                            <button class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+                                Order Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Asthma Medicines -->
+                <div class="bg-white rounded-lg p-4 shadow-md">
+                    <h2 class="text-lg font-bold text-red-600 mb-3">Breathing Emergency</h2>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="font-medium">Asthalin Inhaler</h3>
+                                <p class="text-sm text-gray-600">Salbutamol 200 MDI</p>
+                                <p class="text-xs text-green-600">In Stock</p>
+                            </div>
+                            <button class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+                                Order Now
+                            </button>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="font-medium">Duolin Inhaler</h3>
+                                <p class="text-sm text-gray-600">Ipratropium + Salbutamol</p>
+                                <p class="text-xs text-green-600">In Stock</p>
+                            </div>
+                            <button class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+                                Order Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diabetes Emergency -->
+                <div class="bg-white rounded-lg p-4 shadow-md">
+                    <h2 class="text-lg font-bold text-red-600 mb-3">Diabetes Emergency</h2>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="font-medium">Glucagon Injection</h3>
+                                <p class="text-sm text-gray-600">1mg Emergency Kit</p>
+                                <p class="text-xs text-green-600">In Stock</p>
+                            </div>
+                            <button class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+                                Order Now
+                            </button>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="font-medium">Glucose Gel</h3>
+                                <p class="text-sm text-gray-600">Fast-Acting Gel</p>
+                                <p class="text-xs text-green-600">In Stock</p>
+                            </div>
+                            <button class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+                                Order Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- First Aid Kit -->
+                <div class="bg-white rounded-lg p-4 shadow-md">
+                    <h2 class="text-lg font-bold text-red-600 mb-3">Emergency First Aid</h2>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="font-medium">Advanced First Aid Kit</h3>
+                                <p class="text-sm text-gray-600">Complete Emergency Kit</p>
+                                <p class="text-xs text-green-600">In Stock</p>
+                            </div>
+                            <button class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+                                Order Now
+                            </button>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="font-medium">Burn Care Kit</h3>
+                                <p class="text-sm text-gray-600">Emergency Burn Treatment</p>
+                                <p class="text-xs text-green-600">In Stock</p>
+                            </div>
+                            <button class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+                                Order Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+           
+        </div>
+    </div>
+</body>
+</html> 

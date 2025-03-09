@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Bank Information</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+        }
+
+        .phone-container {
+            position: relative;
+            width: 340px;
+            height: 700px;
+            background: #000;
+            border: 12px solid #000;
+            border-radius: 45px;
+            box-shadow: 
+                inset 0 0 0 2px #3a3a3a,
+                0 20px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .power-button {
+            position: absolute;
+            right: -14px;
+            top: 150px;
+            width: 4px;
+            height: 45px;
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+
+        .volume-buttons {
+            position: absolute;
+            left: -14px;
+            top: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .volume-up, .volume-down {
+            width: 4px;
+            height: 35px;
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+
+        .app-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 35px;
+            overflow-y: auto;
+        }
+
+        .blood-type {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+            margin-right: 4px;
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+
+        .available {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .low {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .critical {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .filter-btn {
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            background-color: #f3f4f6;
+            color: #4b5563;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .highlight {
+            background-color: #fef3c7;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+
+        /* Add smooth transitions */
+        .blood-bank-card {
+            transition: all 0.3s ease;
+        }
+
+        .blood-bank-card.hidden {
+            display: none;
+        }
+
+        .blood-bank-card.visible {
+            animation: slideIn 0.3s ease forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #searchInput:focus {
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <!-- Phone Hardware -->
+        <div class="power-button"></div>
+        <div class="volume-buttons">
+            <div class="volume-up"></div>
+            <div class="volume-down"></div>
+        </div>
+
+        <div class="app-content">
+            <!-- Header with Search -->
+            <div class="sticky top-0 bg-white shadow-md p-4 z-10">
+                <h1 class="text-xl font-bold text-center mb-4">Blood Bank Directory</h1>
+                
+                <!-- Search Bar -->
+                <div class="relative mb-3">
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Search by city, blood type, or blood bank..."
+                        class="w-full px-4 py-2 pl-10 pr-8 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                    />
+                    <span class="absolute left-3 top-2.5 text-gray-400">🔍</span>
+                    <button 
+                        id="clearSearch"
+                        class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 hidden"
+                    >
+                        ✕
+                    </button>
+                </div>
+
+            
+                <!-- Results Count -->
+                <div id="resultsCount" class="text-sm text-gray-600 mt-2"></div>
+            </div>
+
+            <!-- Blood Banks List -->
+            <div id="bloodBanksList" class="p-4 space-y-4">
+                <!-- Blood banks will be inserted here dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const bloodBanks = [
+                {
+                    name: "Red Cross Blood Bank",
+                    city: "Mumbai",
+                    address: "Linking Road, Bandra West, Mumbai - 400050",
+                    phone: "022-26401872",
+                    bloodTypes: {
+                        "A+": "available",
+                        "B+": "available",
+                        "AB+": "low",
+                        "O+": "available",
+                        "A-": "critical",
+                        "B-": "low",
+                        "AB-": "available",
+                        "O-": "low"
+                    }
+                },
+                {
+                    name: "AIIMS Blood Bank",
+                    city: "New Delhi",
+                    address: "AIIMS Campus, Ansari Nagar, New Delhi - 110029",
+                    phone: "011-26593726",
+                    bloodTypes: {
+                        "A+": "available",
+                        "B+": "low",
+                        "AB+": "available",
+                        "O+": "available",
+                        "A-": "low",
+                        "B-": "critical",
+                        "AB-": "low",
+                        "O-": "available"
+                    }
+                },
+                {
+                    name: "Apollo Blood Bank",
+                    city: "Chennai",
+                    address: "21, Greams Lane, Chennai - 600006",
+                    phone: "044-28294429",
+                    bloodTypes: {
+                        "A+": "low",
+                        "B+": "available",
+                        "AB+": "available",
+                        "O+": "critical",
+                        "A-": "available",
+                        "B-": "low",
+                        "AB-": "critical",
+                        "O-": "available"
+                    }
+                },
+                {
+                    name: "Manipal Blood Bank",
+                    city: "Manipal",
+                    address: "Near Tiger Circle, Manipal, Karnataka - 576104",
+                    phone: "0820-2922761",
+                    bloodTypes: {
+                        "A+": "low",
+                        "B+": "available",
+                        "AB+": "available",
+                        "O+": "low",
+                        "A-": "critical",
+                        "B-": "available",
+                        "AB-": "low",
+                        "O-": "available"
+                    }
+                },
+                {
+                    name: "KEM Hospital Blood Bank",
+                    city: "Mumbai",
+                    address: "Acharya Donde Marg, Parel, Mumbai - 400012",
+                    phone: "022-24107000",
+                    bloodTypes: {
+                        "A+": "available",
+                        "B+": "low",
+                        "AB+": "available",
+                        "O+": "available",
+                        "A-": "critical",
+                        "B-": "available",
+                        "AB-": "low",
+                        "O-": "critical"
+                    }
+                },
+                {
+                    name: "Tata Memorial Blood Bank",
+                    city: "Mumbai",
+                    address: "Dr. E Borges Road, Parel, Mumbai - 400012",
+                    phone: "022-24177000",
+                    bloodTypes: {
+                        "A+": "available",
+                        "B+": "available",
+                        "AB+": "low",
+                        "O+": "available",
+                        "A-": "low",
+                        "B-": "critical",
+                        "AB-": "available",
+                        "O-": "low"
+                    }
+                },
+                {
+                    name: "Lions Blood Bank",
+                    city: "Bangalore",
+                    address: "8th Main Road, Wilson Garden, Bangalore - 560027",
+                    phone: "080-22234545",
+                    bloodTypes: {
+                        "A+": "available",
+                        "B+": "low",
+                        "AB+": "critical",
+                        "O+": "available",
+                        "A-": "low",
+                        "B-": "available",
+                        "AB-": "low",
+                        "O-": "available"
+                    }
+                },
+                {
+                    name: "Fortis Blood Bank",
+                    city: "Kolkata",
+                    address: "730, Anandapur, E.M. Bypass, Kolkata - 700107",
+                    phone: "033-66284444",
+                    bloodTypes: {
+                        "A+": "low",
+                        "B+": "available",
+                        "AB+": "available",
+                        "O+": "critical",
+                        "A-": "available",
+                        "B-": "low",
+                        "AB-": "critical",
+                        "O-": "low"
+                    }
+                },
+                {
+                    name: "Sahyadri Blood Bank",
+                    city: "Pune",
+                    address: "Plot No. 30-C, Erandwane, Pune - 411004",
+                    phone: "020-25434343",
+                    bloodTypes: {
+                        "A+": "available",
+                        "B+": "available",
+                        "AB+": "low",
+                        "O+": "available",
+                        "A-": "critical",
+                        "B-": "low",
+                        "AB-": "available",
+                        "O-": "critical"
+                    }
+                },
+                {
+                    name: "Max Healthcare Blood Bank",
+                    city: "New Delhi",
+                    address: "Press Enclave Road, Saket, New Delhi - 110017",
+                    phone: "011-26515050",
+                    bloodTypes: {
+                        "A+": "low",
+                        "B+": "available",
+                        "AB+": "available",
+                        "O+": "low",
+                        "A-": "available",
+                        "B-": "critical",
+                        "AB-": "low",
+                        "O-": "available"
+                    }
+                },
+                {
+                    name: "Amrita Blood Bank",
+                    city: "Kochi",
+                    address: "AIMS Ponekkara, Kochi, Kerala - 682041",
+                    phone: "0484-2851234",
+                    bloodTypes: {
+                        "A+": "available",
+                        "B+": "low",
+                        "AB+": "available",
+                        "O+": "available",
+                        "A-": "critical",
+                        "B-": "available",
+                        "AB-": "low",
+                        "O-": "low"
+                    }
+                },
+                {
+                    name: "Care Blood Bank",
+                    city: "Hyderabad",
+                    address: "Road No. 10, Banjara Hills, Hyderabad - 500034",
+                    phone: "040-23607777",
+                    bloodTypes: {
+                        "A+": "available",
+                        "B+": "available",
+                        "AB+": "critical",
+                        "O+": "low",
+                        "A-": "low",
+                        "B-": "available",
+                        "AB-": "critical",
+                        "O-": "available"
+                    }
+                }
+            ];
+
+            const searchInput = document.getElementById('searchInput');
+            const clearSearchBtn = document.getElementById('clearSearch');
+            const resultsCount = document.getElementById('resultsCount');
+            const bloodBanksList = document.getElementById('bloodBanksList');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            let currentFilter = 'all';
+
+            // Function to render blood banks
+            function renderBloodBanks(banks) {
+                bloodBanksList.innerHTML = banks.map(bank => `
+                    <div class="blood-bank-card bg-white rounded-lg shadow p-4">
+                        <h2 class="font-bold text-lg">${bank.name}</h2>
+                        <p class="text-sm text-gray-600">${bank.address}</p>
+                        <p class="text-sm text-gray-600">📞 ${bank.phone}</p>
+                        <div class="mt-2">
+                            ${Object.entries(bank.bloodTypes)
+                                .map(([type, status]) => `
+                                    <span class="blood-type ${status}">${type}</span>
+                                `).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Function to filter blood banks
+            function filterBloodBanks() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const filtered = bloodBanks.filter(bank => {
+                    const matchesSearch = 
+                        bank.name.toLowerCase().includes(searchTerm) ||
+                        bank.city.toLowerCase().includes(searchTerm) ||
+                        bank.address.toLowerCase().includes(searchTerm) ||
+                        Object.keys(bank.bloodTypes).some(type => 
+                            type.toLowerCase().includes(searchTerm)
+                        );
+
+                    const matchesFilter = 
+                        currentFilter === 'all' ||
+                        Object.values(bank.bloodTypes).includes(currentFilter);
+
+                    return matchesSearch && matchesFilter;
+                });
+
+                renderBloodBanks(filtered);
+                updateResultsCount(filtered.length);
+                clearSearchBtn.style.display = searchTerm ? 'block' : 'none';
+            }
+
+            // Update results count
+            function updateResultsCount(count) {
+                resultsCount.textContent = `Showing ${count} blood bank${count !== 1 ? 's' : ''}`;
+            }
+
+            // Event Listeners
+            searchInput.addEventListener('input', filterBloodBanks);
+
+            clearSearchBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                filterBloodBanks();
+                searchInput.focus();
+            });
+
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.filter;
+                    filterBloodBanks();
+                });
+            });
+
+            // Initial render
+            renderBloodBanks(bloodBanks);
+            updateResultsCount(bloodBanks.length);
+        });
+    </script>
+</body>
+</html>

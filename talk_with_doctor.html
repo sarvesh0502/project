@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talk with Doctor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+        }
+
+        .phone-container {
+            position: relative;
+            width: 340px;
+            height: 700px;
+            background: #000;
+            border: 12px solid #000;
+            border-radius: 45px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .app-content {
+            height: 100%;
+            background: #f5f5f5;
+            border-radius: 35px;
+            overflow-y: scroll;
+            position: relative;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 16px;
+            padding-top: 60px;
+        }
+
+        .app-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #3B82F6;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            z-index: 1000;
+            border-top-left-radius: 35px;
+            border-top-right-radius: 35px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <div class="app-content">
+            <div class="header">Talk with Doctor</div>
+            <div class="p-4 mt-16">
+                <input type="text" id="search" placeholder="Search by Name, City, Specialization" class="w-full p-2 border rounded-md" onkeyup="filterDoctors()">
+            </div>
+            <div id="doctor-list" class="space-y-6 p-4">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const doctors = [
+            { name: "Dr. Rajesh Sharma", hospital: "Apollo Hospitals, New Delhi", address: "Sarita Vihar, Mathura Road, New Delhi", phone: "+91 9876543210", specialization: "Cardiologist", fee: "₹1200", experience: "20 Years", rating: "⭐⭐⭐⭐⭐", image: "doctor1.jpg" },
+            { name: "Dr. Sneha Verma", hospital: "Fortis Hospital, Mumbai", address: "Mulund-Goregaon Link Road, Mumbai", phone: "+91 8765432109", specialization: "Neurologist", fee: "₹1500", experience: "18 Years", rating: "⭐⭐⭐⭐", image: "doctor2.jpg" },
+            { name: "Dr. Anil Kumar", hospital: "AIIMS, Bengaluru", address: "Hosur Road, Bengaluru", phone: "+91 7654321098", specialization: "Orthopedic Surgeon", fee: "₹1000", experience: "22 Years", rating: "⭐⭐⭐⭐⭐", image: "doctor3.jpg" }
+        ];
+
+        function displayDoctors(filteredDoctors) {
+            const doctorList = document.getElementById("doctor-list");
+            doctorList.innerHTML = "";
+            filteredDoctors.forEach(doc => {
+                const doctorCard = `
+                    <div class="p-4 bg-white rounded-lg shadow-lg">
+                        <img src="${doc.image}" alt="Doctor's Photo" class="w-full h-40 object-cover rounded-lg mb-3">
+                        <h2 class="text-xl font-bold">${doc.name}</h2>
+                        <p class="text-gray-700">🏥 Hospital: ${doc.hospital}</p>
+                        <p class="text-gray-700">📍 Address: ${doc.address}</p>
+                        <p class="text-gray-700">📞 Phone: ${doc.phone}</p>
+                        <p class="text-gray-700">🩺 Specialization: ${doc.specialization}</p>
+                        <p class="text-gray-700">💰 Consultation Fee: ${doc.fee}</p>
+                        <p class="text-gray-700">👨‍⚕️ Experience: ${doc.experience}</p>
+                        <p class="text-yellow-500 text-lg">⭐ Rating: ${doc.rating}</p>
+                    </div>
+                `;
+                doctorList.innerHTML += doctorCard;
+            });
+        }
+
+        function filterDoctors() {
+            const query = document.getElementById("search").value.toLowerCase();
+            const filteredDoctors = doctors.filter(doc =>
+                doc.name.toLowerCase().includes(query) ||
+                doc.hospital.toLowerCase().includes(query) ||
+                doc.specialization.toLowerCase().includes(query) ||
+                doc.address.toLowerCase().includes(query)
+            );
+            displayDoctors(filteredDoctors);
+        }
+
+        displayDoctors(doctors);
+    </script>
+</body>
+</html>
